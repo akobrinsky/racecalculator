@@ -31,6 +31,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
   (globalId) => {
     const { type, id } = fromGlobalId(globalId);
     if (type === 'User') {
+      console.log(type, id)
       return getUser(id);
     }
     if (type === 'Race') {
