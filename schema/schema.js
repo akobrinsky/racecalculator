@@ -3,6 +3,8 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLID,
+  GraphQLList,
   GraphQLNonNull,
 } = require('graphql');
 
@@ -17,7 +19,7 @@ const {
 } = require('graphql-relay');
 
 const {
-  getUser, getRaces, getGoals, getRace, addRace, deleteRace, editRace,
+  getUser, getRaces, getGoals, getRace, addRace, deleteRace, editRace, getUsers,
 } = require('./helpers');
 
 /**
@@ -27,61 +29,43 @@ const {
  * way we resolve an object that implements node to its type.
  */
 
-const { nodeInterface, nodeField } = nodeDefinitions(
+const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
   (globalId) => {
     const { type, id } = fromGlobalId(globalId);
-    if (type === 'User') {
-      console.log(type, id)
-      return getUser(id);
-    }
-    if (type === 'Race') {
-      return getRace(id);
-    }
+    if (type === 'User') return getUser(id);
+    if (type === 'Race') return getRace(id);
+    return null;
   },
-  // we have a one to many relationships so how is this gonna work?
-  (obj) => (obj.races ? UserType : RaceType),
+  (obj) => {
+    if (obj.email) {
+      return UserType;
+    }
+    if (obj.time) {
+      return RaceType;
+    }
+    return null;
+  },
 );
 
 // We need to make sure this type is connected to our User object
 const RaceType = new GraphQLObjectType({
   name: 'Race',
-  description: 'A race for a specific user',
+  // description: 'A race for a specific user',
   interfaces: [nodeInterface],
   fields: () => ({
-    id: globalIdField(),
+    id: globalIdField('Race'),
     date: { type: GraphQLString },
     type: { type: GraphQLString },
     time: { type: GraphQLString },
-    userId: { type: GraphQLInt },
     user: {
       type: UserType,
-      resolve: async (parent) => getUser(parent.userId),
+      resolve: (parent) => getUser(parent.userId),
     },
   }),
 });
 
 const { connectionType: raceConnection } = connectionDefinitions({
   nodeType: RaceType,
-});
-
-const GoalType = new GraphQLObjectType({
-  name: 'Goal',
-  description: 'A runner\'s goal',
-  interfaces: [nodeInterface],
-  fields: () => ({
-    id: globalIdField(),
-    type: { type: GraphQLString, description: 'Type of race, i.e. 5k, 10, half-marathon...' },
-    userId: { type: GraphQLString },
-    time: { type: GraphQLString },
-    user: {
-      type: UserType,
-      resolve: async (parent) => getUser(parent.userId),
-    },
-  }),
-});
-
-const { connectionType: goalConnection } = connectionDefinitions({
-  nodeType: GoalType,
 });
 
 const UserType = new GraphQLObjectType({
@@ -92,7 +76,6 @@ const UserType = new GraphQLObjectType({
     id: globalIdField(),
     username: { type: GraphQLString, description: 'The name of the user' },
     email: { type: GraphQLString },
-    password: { type: GraphQLString },
     races: {
       type: raceConnection,
       description: 'The races for a specific user',
@@ -100,15 +83,6 @@ const UserType = new GraphQLObjectType({
       resolve: async (user, args) => {
         const userRaces = await getRaces(user.id);
         return connectionFromArray([...userRaces], args);
-      },
-    },
-    goals: {
-      type: goalConnection,
-      description: 'The goals for a specific user',
-      args: connectionArgs,
-      resolve: async (user, args) => {
-        const userGoals = await getGoals(user.id);
-        return connectionFromArray([...userGoals], args);
       },
     },
   }),
@@ -120,20 +94,21 @@ const queryType = new GraphQLObjectType({
   fields: () => ({
     user: {
       type: UserType,
-      args: { id: { type: GraphQLInt } },
-      resolve: (parent, args) => getUser(args.id),
+      args: { id: { type: GraphQLID } },
+      resolve: (_, { id }) => {
+        const realId = fromGlobalId(id).id;
+        return getUser(realId);
+      },
     },
     race: {
       type: RaceType,
       args: { id: { type: GraphQLInt } },
       resolve: (parent, args) => getRace(args.id),
     },
+    node: nodeField,
+    nodes: nodesField,
   }),
 });
-
-//= ===========================================
-/* Mutations need to be updated */
-//= ===========================================
 
 const AddRaceMutation = mutationWithClientMutationId({
   name: 'addRace',

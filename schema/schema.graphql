@@ -1,6 +1,18 @@
 type Query {
-  user(id: Int): User
+  user(id: ID): User
   race(id: Int): Race
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+
+  """Fetches objects given their IDs"""
+  nodes(
+    """The IDs of objects"""
+    ids: [ID!]!
+  ): [Node]!
 }
 
 """A user who loves to run"""
@@ -11,13 +23,9 @@ type User implements Node {
   """The name of the user"""
   username: String
   email: String
-  password: String
 
   """The races for a specific user"""
   races(after: String, first: Int, before: String, last: Int): RaceConnection
-
-  """The goals for a specific user"""
-  goals(after: String, first: Int, before: String, last: Int): GoalConnection
 }
 
 """An object with an ID"""
@@ -59,43 +67,11 @@ type RaceEdge {
   cursor: String!
 }
 
-"""A race for a specific user"""
 type Race implements Node {
   """The ID of an object"""
   id: ID!
   date: String
   type: String
-  time: String
-  userId: Int
-  user: User
-}
-
-"""A connection to a list of items."""
-type GoalConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [GoalEdge]
-}
-
-"""An edge in a connection."""
-type GoalEdge {
-  """The item at the end of the edge"""
-  node: Goal
-
-  """A cursor for use in pagination"""
-  cursor: String!
-}
-
-"""A runner's goal"""
-type Goal implements Node {
-  """The ID of an object"""
-  id: ID!
-
-  """Type of race, i.e. 5k, 10, half-marathon..."""
-  type: String
-  userId: String
   time: String
   user: User
 }

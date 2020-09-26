@@ -9,21 +9,11 @@ const UserRaces = (props) => {
     <QueryRenderer
     environment={environment}
     query={graphql`
-    query UserRacesQuery($userID: Int!) {
+    query UserRacesQuery($userID: ID!) {
       user(id: $userID) {
         email
         username
         id
-        races {
-          edges {
-            node {
-              date
-              type
-              time
-              id
-            }
-          }
-        }
       }
     }
     `}
@@ -40,7 +30,7 @@ const UserRaces = (props) => {
       return (
       <div>
         <h1>User ID: {props.user.username}</h1>
-          <div>{props.user.races.edges.map(item => <div key={item.node.id}>{item.node.date} {item.node.type} {item.node.time}</div>)}</div>
+          <div>{props.user.email}</div>
       </div>
       );
     }}

@@ -9,23 +9,13 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type UserRacesQueryVariables = {|
-  userID: number
+  userID: string
 |};
 export type UserRacesQueryResponse = {|
   +user: ?{|
     +email: ?string,
     +username: ?string,
     +id: string,
-    +races: ?{|
-      +edges: ?$ReadOnlyArray<?{|
-        +node: ?{|
-          +date: ?string,
-          +type: ?string,
-          +time: ?string,
-          +id: string,
-        |}
-      |}>
-    |},
   |}
 |};
 export type UserRacesQuery = {|
@@ -37,22 +27,12 @@ export type UserRacesQuery = {|
 
 /*
 query UserRacesQuery(
-  $userID: Int!
+  $userID: ID!
 ) {
   user(id: $userID) {
     email
     username
     id
-    races {
-      edges {
-        node {
-          date
-          type
-          time
-          id
-        }
-      }
-    }
   }
 }
 */
@@ -65,14 +45,7 @@ var v0 = [
     "name": "userID"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = [
+v1 = [
   {
     "alias": null,
     "args": [
@@ -101,60 +74,11 @@ v2 = [
         "name": "username",
         "storageKey": null
       },
-      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "RaceConnection",
-        "kind": "LinkedField",
-        "name": "races",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "RaceEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Race",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "date",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "type",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "time",
-                    "storageKey": null
-                  },
-                  (v1/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
     ],
@@ -167,7 +91,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "UserRacesQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -176,19 +100,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UserRacesQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "53913cd0b7244339e70f6d9dd57ea9ed",
+    "cacheID": "d1e4cfb9ef619e8e5cd69c3e77033c3f",
     "id": null,
     "metadata": {},
     "name": "UserRacesQuery",
     "operationKind": "query",
-    "text": "query UserRacesQuery(\n  $userID: Int!\n) {\n  user(id: $userID) {\n    email\n    username\n    id\n    races {\n      edges {\n        node {\n          date\n          type\n          time\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query UserRacesQuery(\n  $userID: ID!\n) {\n  user(id: $userID) {\n    email\n    username\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'c081b965145dc84e080d6ed84e200729';
+(node/*: any*/).hash = 'b5f7c680777ebd53c64ca36dba548f8d';
 
 module.exports = node;
