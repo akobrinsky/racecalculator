@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { EditRaceMutation, DeleteRaceMutation, AddRaceMutation} from '../schema/schema';
-import {createFragmentContainer, graphql, QueryRenderer} from 'react-relay';
-import UserRaces from './Components/UserRaces'
-import Login from './Login/Login';
-import User from './User/User';
+import React, { Component } from "react";
+import UserRaces from "./Components/UserRaces";
 
 export default class App extends React.Component {
   render() {
     const testID = "VXNlcjoz";
     return (
       <div>
-        <UserRaces userID={testID}/>
+        <UserRaces userID={testID} />
       </div>
     );
   }

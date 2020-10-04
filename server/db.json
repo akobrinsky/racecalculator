@@ -14,13 +14,13 @@
     },
     {
       "id": 3,
-      "username": "aryehbot",
-      "email": "aryehbot@lilbuddy.biz",
+      "username": "akobrinsky",
+      "email": "akobrinsky@email.com",
       "password": "qwenj123"
     },
     {
       "username": "bonjay",
-      "email": "bonjay@bonjay.biz",
+      "email": "bonjay@bonjay.info",
       "password": "bonjay123",
       "id": 4
     },
@@ -68,28 +68,28 @@
       "id": 2,
       "date": "Sept 1, 2028",
       "type": "half marathon",
-      "time": "22min"
+      "time": "1hr 31min"
     },
     {
       "userId": 3,
       "id": 3,
       "date": "Dec 1, 2020",
       "type": "10k",
-      "time": "23min"
+      "time": "41min"
     },
     {
       "userId": 3,
       "id": 4,
       "date": "June 1, 2021",
       "type": "1 mile",
-      "time": "21min"
+      "time": "4min 45sec"
     },
     {
       "userId": 3,
       "id": 5,
       "date": "April 1, 2021",
       "type": "marathon",
-      "time": "60min"
+      "time": "3hrs 2min"
     },
     {
       "userId": 2,
@@ -251,13 +251,6 @@
       "time": "22min 32sec",
       "date": "feb 28, 2019",
       "id": 28
-    },
-    {
-      "userId": 1,
-      "type": "5k",
-      "time": "19min",
-      "date": "march 31, 2020",
-      "id": 29
     },
     {
       "userId": 1,
@@ -429,73 +422,66 @@
     },
     {
       "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "type": "megamunch mile",
+      "time": "7 hrsz",
+      "date": "2023",
       "id": 54
     },
     {
-      "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "userId": 3,
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 25, 2019",
       "id": 55
     },
     {
       "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 25, 2019",
       "id": 56
     },
     {
-      "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "userId": 1,
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 25, 2019",
       "id": 57
     },
     {
-      "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "userId": 1,
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 23, 2019",
       "id": 58
     },
     {
       "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 23, 2019",
       "id": 59
     },
     {
-      "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "userId": 3,
+      "type": "10k",
+      "time": "40min 23sec",
+      "date": "feb 23, 2019",
       "id": 60
     },
     {
-      "userId": 2,
-      "type": "55",
-      "time": "4hrs",
-      "date": "april 21, 2020",
+      "userId": 3,
+      "type": "5k",
+      "time": "19min 14sec",
+      "date": "Feb 1, 2019",
       "id": 61
     },
     {
-      "userId": 2,
-      "type": "ultra",
-      "time": "4 hrs",
-      "date": "feb 27, 2019",
-      "id": 62
-    },
-    {
       "userId": 3,
-      "type": "ultra",
-      "time": "4 hrs",
-      "date": "feb 27, 2019",
-      "id": 63
+      "type": "10k",
+      "time": "39min 23sec",
+      "date": "Feb 2, 2018",
+      "id": 62
     }
   ],
   "goals": [

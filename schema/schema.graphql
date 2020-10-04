@@ -1,6 +1,7 @@
 type Query {
   user(id: ID): User
-  race(id: Int): Race
+  race(id: ID): Race
+  viewer: User
 
   """Fetches an object given its ID"""
   node(
@@ -70,8 +71,14 @@ type RaceEdge {
 type Race implements Node {
   """The ID of an object"""
   id: ID!
+
+  """Date of the race"""
   date: String
+
+  """Type of race"""
   type: String
+
+  """Finish time of the race"""
   time: String
   user: User
 }
@@ -97,7 +104,7 @@ input addRaceInput {
 }
 
 type deleteRacePayload {
-  deletedRaceId: Race
+  deletedRace: Race
   user: User
   clientMutationId: String
 }
@@ -117,8 +124,8 @@ type editRacePayload {
 input editRaceInput {
   id: Int!
   userId: Int!
-  type: String!
-  date: String!
-  time: String!
+  type: String
+  date: String
+  time: String
   clientMutationId: String
 }

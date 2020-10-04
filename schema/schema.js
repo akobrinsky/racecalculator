@@ -1,10 +1,10 @@
+/* eslint-disable no-use-before-define */
 const {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
   GraphQLID,
-  GraphQLList,
   GraphQLNonNull,
 } = require('graphql');
 
@@ -18,22 +18,13 @@ const {
   connectionFromArray,
 } = require('graphql-relay');
 
-const {
-  getUser, getRaces, getGoals, getRace, addRace, deleteRace, editRace, getUsers,
-} = require('./helpers');
-
-/**
- * We get the node interface and field from the relay library.
- *
- * The first method is the way we resolve an ID to its object. The second is the
- * way we resolve an object that implements node to its type.
- */
+const db = require('./database');
 
 const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
   (globalId) => {
     const { type, id } = fromGlobalId(globalId);
-    if (type === 'User') return getUser(id);
-    if (type === 'Race') return getRace(id);
+    if (type === 'User') return db.getUser(id);
+    if (type === 'Race') return db.getRace(id);
     return null;
   },
   (obj) => {
@@ -47,19 +38,17 @@ const { nodeInterface, nodeField, nodesField } = nodeDefinitions(
   },
 );
 
-// We need to make sure this type is connected to our User object
 const RaceType = new GraphQLObjectType({
   name: 'Race',
-  // description: 'A race for a specific user',
   interfaces: [nodeInterface],
   fields: () => ({
     id: globalIdField('Race'),
-    date: { type: GraphQLString },
-    type: { type: GraphQLString },
-    time: { type: GraphQLString },
+    date: { type: GraphQLString, description: 'Date of the race' },
+    type: { type: GraphQLString, description: 'Type of race' },
+    time: { type: GraphQLString, description: 'Finish time of the race' },
     user: {
       type: UserType,
-      resolve: (parent) => getUser(parent.userId),
+      resolve: (source) => db.getUser(source.userId),
     },
   }),
 });
@@ -81,7 +70,7 @@ const UserType = new GraphQLObjectType({
       description: 'The races for a specific user',
       args: connectionArgs,
       resolve: async (user, args) => {
-        const userRaces = await getRaces(user.id);
+        const userRaces = await db.getRaces(user.id);
         return connectionFromArray([...userRaces], args);
       },
     },
@@ -89,21 +78,27 @@ const UserType = new GraphQLObjectType({
 });
 
 const queryType = new GraphQLObjectType({
-  // root query allows us to jump into the graph. Entry point to a specific node.
   name: 'Query',
   fields: () => ({
     user: {
       type: UserType,
       args: { id: { type: GraphQLID } },
-      resolve: (_, { id }) => {
-        const realId = fromGlobalId(id).id;
-        return getUser(realId);
+      resolve: (_, args) => {
+        const { id } = fromGlobalId(args.id);
+        return db.getUser(id);
       },
     },
     race: {
       type: RaceType,
-      args: { id: { type: GraphQLInt } },
-      resolve: (parent, args) => getRace(args.id),
+      args: { id: { type: GraphQLID } },
+      resolve: (_, args) => {
+        const { id } = fromGlobalId(args.id);
+        return db.getRace(id);
+      },
+    },
+    viewer: {
+      type: UserType,
+      resolve: () => db.getViewer(),
     },
     node: nodeField,
     nodes: nodesField,
@@ -121,16 +116,16 @@ const AddRaceMutation = mutationWithClientMutationId({
   outputFields: {
     race: {
       type: RaceType,
-      resolve: (payload) => getRace(payload.raceId),
+      resolve: (payload) => db.getRace(payload.raceId),
     },
     user: {
       type: UserType,
-      resolve: (payload) => getUser(payload.userId),
+      resolve: (payload) => db.getUser(payload.userId),
     },
   },
   mutateAndGetPayload: ({
     type, date, time, userId,
-  }) => addRace(type, date, time, userId),
+  }) => db.addRace(type, date, time, userId),
 });
 
 const DeleteRaceMutation = mutationWithClientMutationId({
@@ -140,16 +135,16 @@ const DeleteRaceMutation = mutationWithClientMutationId({
     userId: { type: new GraphQLNonNull(GraphQLInt) },
   },
   outputFields: {
-    deletedRaceId: {
+    deletedRace: {
       type: RaceType,
-      resolve: ({ id }) => id,
+      resolve: (payload) => payload.race,
     },
     user: {
       type: UserType,
-      resolve: ({ userId }) => getUser(userId),
+      resolve: ({ userId }) => db.getUser(userId),
     },
   },
-  mutateAndGetPayload: ({ id, userId }) => deleteRace(id, userId),
+  mutateAndGetPayload: ({ id, userId }) => db.deleteRace(id, userId),
 });
 
 const EditRaceMutation = mutationWithClientMutationId({
@@ -157,9 +152,9 @@ const EditRaceMutation = mutationWithClientMutationId({
   inputFields: {
     id: { type: new GraphQLNonNull(GraphQLInt) },
     userId: { type: new GraphQLNonNull(GraphQLInt) },
-    type: { type: new GraphQLNonNull(GraphQLString) },
-    date: { type: new GraphQLNonNull(GraphQLString) },
-    time: { type: new GraphQLNonNull(GraphQLString) },
+    type: { type: GraphQLString },
+    date: { type: GraphQLString },
+    time: { type: GraphQLString },
   },
   outputFields: {
     editedRace: {
@@ -168,12 +163,12 @@ const EditRaceMutation = mutationWithClientMutationId({
     },
     user: {
       type: UserType,
-      resolve: ({ userId }) => getUser(userId),
+      resolve: ({ userId }) => db.getUser(userId),
     },
   },
   mutateAndGetPayload: ({
     id, userId, type, date, time,
-  }) => editRace(id, userId, type, date, time),
+  }) => db.editRace(id, userId, type, date, time),
 });
 
 const mutationType = new GraphQLObjectType({
